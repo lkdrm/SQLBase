@@ -1,7 +1,8 @@
-﻿using LibrarySQL.Actions;
+using LibrarySQL.Actions;
 using LibrarySQL.DataBase;
 using Microsoft.EntityFrameworkCore;
-
+using LibrarySQL.UI;
+Console.Title = "SQL Library";
 using var db = new LibraryContext();
 
 db.Database.EnsureCreated();
@@ -9,18 +10,17 @@ db.Database.EnsureCreated();
 while (true)
 {
     Console.Clear();
-    Console.WriteLine("=== Library: Main menu ===");
-    Console.WriteLine("1. [Book] Add new book");
-    Console.WriteLine("2. [Book] List of books");
-    Console.WriteLine("3. [Book] Change status of book");
-    Console.WriteLine("4. [People] Add user");
-    Console.WriteLine("5. [People] List of Users");
-    Console.WriteLine("6. [Operation] Borrow book");
-    Console.WriteLine("7. [Operation] Book returning");
-    Console.WriteLine("8. Exit");
-    Console.WriteLine("\nYour choice: ");
+    ConsoleHelper.PrintHeader("=== Library: Main menu ===");
+    ConsoleHelper.PrintMenuOption("1. [Book] Add new book");
+    ConsoleHelper.PrintMenuOption("2. [Book] List of books");
+    ConsoleHelper.PrintMenuOption("3. [Book] Change status of book");
+    ConsoleHelper.PrintMenuOption("4. [People] Add user");
+    ConsoleHelper.PrintMenuOption("5. [People] List of Users");
+    ConsoleHelper.PrintMenuOption("6. [Operation] Borrow book");
+    ConsoleHelper.PrintMenuOption("7. [Operation] Book returning");
+    ConsoleHelper.PrintMenuOption("8. Exit");
 
-    var input = Console.ReadLine();
+    var input = ConsoleHelper.ReadInput("\nYour choice: ");
 
     if (input == "8")
     {
@@ -51,7 +51,7 @@ while (true)
             BookManager.ReturnBook(db);
             break;
         default:
-            Console.WriteLine("Unknown command.");
+            ConsoleHelper.PrintError("Unknown command.");
             break;
     }
 }
