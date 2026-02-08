@@ -1,6 +1,7 @@
-﻿using LibrarySQL.Books;
+using LibrarySQL.Books;
 using LibrarySQL.DataBase;
 using Microsoft.EntityFrameworkCore;
+using LibrarySQL.UI;
 
 namespace LibrarySQL.Actions;
 
@@ -17,9 +18,8 @@ public static class BookManager
     /// store.</param>
     public static void AddBook(LibraryContext db)
     {
-        Console.WriteLine("\n--- Adding new book ---");
-        Console.WriteLine("Enter a book name: ");
-        string title = Console.ReadLine();
+        ConsoleHelper.PrintHeader("\n--- Adding new book ---");
+        string title = ConsoleHelper.ReadInput("Enter a book name: ");
 
         var newBook = new Book
         {
@@ -31,8 +31,8 @@ public static class BookManager
         db.Books.Add(newBook);
         db.SaveChanges();
 
-        Console.WriteLine($"The book '{title}' has been saved.");
-        Console.WriteLine("Press 'Enter' to continue...");
+        ConsoleHelper.PrintSuccess($"The book '{title}' has been saved.");
+        ConsoleHelper.PrintInfo("Press 'Enter' to continue...");
         Console.ReadLine();
     }
 
@@ -42,24 +42,24 @@ public static class BookManager
     /// <param name="db">The database context containing the collection of books to display. Cannot be null.</param>
     public static void ShowAllBooks(LibraryContext db)
     {
-        Console.WriteLine("\n--- The list of books ---");
+        ConsoleHelper.PrintHeader("\n--- The list of books ---");
 
         var books = db.Books.ToList();
 
         if (books.Count == 0)
         {
-            Console.WriteLine("The library is empty.");
+            ConsoleHelper.PrintInfo("The library is empty.");
         }
         else
         {
             foreach (var book in books)
             {
-                var borrowed = book.Status == BookStatus.Borrowed ? book.Borrower.Name : "No";
-                Console.WriteLine($"{book.Id}. {book.Title} -- Status: {book.Status} -- Borrowed { borrowed }");
+                var borrowed = book.Status == BookStatus.Borrowed ? book.Borrower?.Name : "No";
+                ConsoleHelper.PrintInfo($"{book.Id}. {book.Title} -- Status: {book.Status} -- Borrowed { borrowed }");
             }
         }
 
-        Console.WriteLine("\nPress 'Enter' back to main menu...");
+        ConsoleHelper.PrintInfo("\nPress 'Enter' back to main menu...");
         Console.ReadLine();
     }
 
@@ -69,10 +69,9 @@ public static class BookManager
     /// <param name="db">The database context used to access and update book records. Cannot be null.</param>
     public static void ChangeStatus(LibraryContext db)
     {
-        Console.WriteLine("\n--- Change status of book ---");
-        Console.WriteLine("Enter the ID of book: ");
+        ConsoleHelper.PrintHeader("\n--- Change status of book ---");
 
-        if (!int.TryParse(Console.ReadLine(), out int bookId))
+        if (!int.TryParse(ConsoleHelper.ReadInput("Enter the ID of book: "), out int bookId))
         {
             return;
         }
@@ -80,17 +79,17 @@ public static class BookManager
 
         if (book == null)
         {
-            Console.WriteLine($"Can't find book with ID: {bookId}");
+            ConsoleHelper.PrintError($"Can't find book with ID: {bookId}");
             return;
         }
 
-        Console.WriteLine($"Picked book: {book.Title}");
-        Console.WriteLine($"Current book status: {book.Status}");
+        ConsoleHelper.PrintInfo($"Picked book: {book.Title}");
+        ConsoleHelper.PrintInfo($"Current book status: {book.Status}");
 
-        Console.WriteLine("Pick a status of book:");
-        Console.WriteLine("1 - Available");
-        Console.WriteLine("2 - Borrowed");
-        Console.WriteLine("3 - Waiting/Lost");
+        ConsoleHelper.PrintHeader("Pick a status of book:");
+        ConsoleHelper.PrintMenuOption("1 - Available");
+        ConsoleHelper.PrintMenuOption("2 - Borrowed");
+        ConsoleHelper.PrintMenuOption("3 - Waiting/Lost");
 
         var choice = Console.ReadLine();
 
@@ -103,7 +102,7 @@ public static class BookManager
         };
 
         db.SaveChanges();
-        Console.WriteLine("Status has been updated!");
+        ConsoleHelper.PrintSuccess("Status has been updated!");
         Console.ReadKey();
     }
 
@@ -115,11 +114,9 @@ public static class BookManager
     /// initialized.</param>
     public static void BorrowBook(LibraryContext db)
     {
-        Console.WriteLine("\n--- Borrowing book ---");
+        ConsoleHelper.PrintHeader("\n--- Borrowing book ---");
 
-        Console.WriteLine("Enter the ID of Book");
-
-        if (!int.TryParse(Console.ReadLine(), out int bookId))
+        if (!int.TryParse(ConsoleHelper.ReadInput("Enter the ID of Book: "), out int bookId))
         {
             return;
         }
@@ -128,19 +125,17 @@ public static class BookManager
 
         if (book == null)
         {
-            Console.WriteLine($"Can't find current book: {bookId}");
+            ConsoleHelper.PrintError($"Can't find current book: {bookId}");
             return;
         }
 
         if (book.Status != BookStatus.Available)
         {
-            Console.WriteLine($"Book is not available. Current status: {book.Status}");
+            ConsoleHelper.PrintError($"Book is not available. Current status: {book.Status}");
             return;
         }
 
-        Console.WriteLine("Please enter the user ID: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int userId))
+        if (!int.TryParse(ConsoleHelper.ReadInput("Please enter the user ID: "), out int userId))
         {
             return;
         }
@@ -149,7 +144,7 @@ public static class BookManager
 
         if (user == null)
         {
-            Console.WriteLine($"Can't find user ID: {userId}");
+            ConsoleHelper.PrintError($"Can't find user ID: {userId}");
             return;
         }
 
@@ -159,7 +154,7 @@ public static class BookManager
 
         db.SaveChanges();
 
-        Console.WriteLine($"The book '{book.Title}' has been borrowed to user: {user.Name}");
+        ConsoleHelper.PrintSuccess($"The book '{book.Title}' has been borrowed to user: {user.Name}");
         Console.ReadLine();
     }
 
@@ -169,9 +164,8 @@ public static class BookManager
     /// <param name="db">The database context used to access and update book records. Cannot be null.</param>
     public static void ReturnBook(LibraryContext db)
     {
-        Console.WriteLine("\n--- Book returning ---");
-        Console.WriteLine("Enter the book ID: ");
-        if (!int.TryParse(Console.ReadLine(), out int bookId))
+        ConsoleHelper.PrintHeader("\n--- Book returning ---");
+        if (!int.TryParse(ConsoleHelper.ReadInput("Enter the book ID: "), out int bookId))
         {
             return;
         }
@@ -180,17 +174,17 @@ public static class BookManager
 
         if (book == null)
         {
-            Console.WriteLine($"Can't find the current ID of book: {bookId}");
+            ConsoleHelper.PrintError($"Can't find the current ID of book: {bookId}");
             return;
         }
 
         if (book.Borrower == null)
         {
-            Console.WriteLine($"The book '{book.Title}' is not currently borrowed.");
+            ConsoleHelper.PrintError($"The book '{book.Title}' is not currently borrowed.");
             return;
         }
 
-        Console.WriteLine($"The book '{book.Title}' has been returned by user: {book.Borrower.Name}");
+        ConsoleHelper.PrintSuccess($"The book '{book.Title}' has been returned by user: {book.Borrower.Name}");
 
         book.Borrower = null;
         book.BorrowerId = null;

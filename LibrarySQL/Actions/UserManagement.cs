@@ -1,5 +1,6 @@
-﻿using LibrarySQL.DataBase;
+using LibrarySQL.DataBase;
 using LibrarySQL.Users;
+using LibrarySQL.UI;
 
 namespace LibrarySQL.Actions;
 
@@ -15,17 +16,15 @@ public static class UserManagement
     /// instance.</param>
     public static void AddUser(LibraryContext db)
     {
-        Console.WriteLine("\n--- Registration new user ---");
-        Console.WriteLine("Enter users name: ");
-
-        string userName = Console.ReadLine();
+        ConsoleHelper.PrintHeader("\n--- Registration new user ---");
+        string userName = ConsoleHelper.ReadInput("Enter users name: ");
 
         var newUser = new User { Name = userName };
 
         db.Users.Add(newUser);
         db.SaveChanges();
 
-        Console.WriteLine($"User '{userName}' has been added");
+        ConsoleHelper.PrintSuccess($"User '{userName}' has been added");
         Console.ReadLine();
     }
 
@@ -35,12 +34,12 @@ public static class UserManagement
     /// <param name="db">The database context containing the user records to display. Cannot be null.</param>
     public static void ShowAllUsers(LibraryContext db)
     {
-        Console.WriteLine("\n--- List of users ---");
+        ConsoleHelper.PrintHeader("\n--- List of users ---");
         var users = db.Users.ToList();
 
         foreach (var user in users)
         {
-            Console.WriteLine($"ID: {user.Id} | Name: {user.Name}");
+            ConsoleHelper.PrintInfo($"ID: {user.Id} | Name: {user.Name}");
         }
         Console.ReadLine();
     }
