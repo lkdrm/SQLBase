@@ -27,7 +27,7 @@
 
             <TextBlock Grid.Column="0" Text="Song catalog" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
 
-            <ui:TextBox x:Name="SearchBox" Grid.Column="1" Margin="20,0" PlaceholderText="Search by name..." TextChanged="SearchBox_TextChanged" VerticalAlignment="Center"/>
+            <ui:TextBox x:Name="SearchBox" Grid.Column="1" Margin="20,0" PlaceholderText="Search by title or artist..." TextChanged="SearchBox_TextChanged" VerticalAlignment="Center"/>
 
             <ui:Button Grid.Column="2" Content="Theme" Appearance="Secondary" Click="ThemeButton_Click" VerticalAlignment="Center"/>
         </Grid>
@@ -35,7 +35,8 @@
         <DataGrid x:Name="SongsGrid" Grid.Row="2" AutoGenerateColumns="True" IsReadOnly="True" HeadersVisibility="Column"/>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <ui:Button Content="Add test songs" Appearance="Secondary" Margin="0,0,10,0" Click="AddSongs_Click"/>
+            <ui:Button Content="Delete" Appearance="Secondary" Margin="0,0,10,0" Click="DeleteSong_Click"/>
+            <ui:Button Content="Add song" Appearance="Secondary" Margin="0,0,10,0" Click="AddSong_Click"/>
             <ui:Button Content="Buy" Appearance="Primary" Click="BuySong_click"/>
         </StackPanel>
     </Grid>
