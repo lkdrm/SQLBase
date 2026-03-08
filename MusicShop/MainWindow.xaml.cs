@@ -20,7 +20,6 @@ public partial class MainWindow : FluentWindow
     /// <summary>
     /// Asynchronously loads the list of songs from the database and binds it to the SongsGrid control.
     /// </summary>
-    /// <returns></returns>
     private async Task LoadSongsAsync()
     {
         using var db = new MusicContext();
@@ -107,6 +106,30 @@ public partial class MainWindow : FluentWindow
         else
         {
             await ShowMessageAsync("Please select a song from the list to delete.", "No Song Selected");
+        }
+    }
+
+    /// <summary>
+    /// Handles the click event for editing the currently selected song in the songs grid.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the click event.</param>
+    private async void EditSong_Click(object sender, RoutedEventArgs e)
+    {
+        if (SongsGrid.SelectedItem == null)
+        {
+            await ShowMessageAsync("Chose song for update", "Song update");
+        }
+        else
+        {
+            EditSongWindow editSongWindow = new((Song)SongsGrid.SelectedItem);
+
+            editSongWindow.Owner = this;
+            if (editSongWindow.ShowDialog() == true)
+            {
+                await LoadSongsAsync();
+                await ShowMessageAsync("The song has been successfully updated.", "Song Updated");
+            }
         }
     }
 
