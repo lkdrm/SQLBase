@@ -36,6 +36,7 @@
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <ui:Button Content="Delete" Appearance="Secondary" Margin="0,0,10,0" Click="DeleteSong_Click"/>
+            <ui:Button Content="Edit song" Appearance="Secondary" Margin="0,0,10,0" Click="EditSong_Click"/>
             <ui:Button Content="Add song" Appearance="Secondary" Margin="0,0,10,0" Click="AddSong_Click"/>
             <ui:Button Content="Buy" Appearance="Primary" Click="BuySong_click"/>
         </StackPanel>
