@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicShop.Data;
+using System.ComponentModel;
 using System.Windows;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -9,11 +10,40 @@ namespace MusicShop;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : FluentWindow
+public partial class MainWindow : FluentWindow, INotifyPropertyChanged
 {
+    /// <summary>
+    /// Gets the collection of items currently in the shopping cart, allowing for data binding and manipulation of the cart's contents.
+    /// </summary>
+    private readonly List<ShoppingCartItem> shoppingCart = [];
+
+    /// <summary>
+    /// Occurs when a property value changes.
+    /// </summary>
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>
+    /// Gets or sets the count of items currently in the shopping cart, providing a property for data binding to display the number of items in the cart.
+    /// </summary>
+    private int _cartItemsCount = 0;
+
+    /// <summary>
+    /// Gets or sets the total number of items currently in the shopping cart.
+    /// </summary>
+    public int CartItemsCount
+    {
+        get => _cartItemsCount;
+        set
+        {
+            _cartItemsCount = value;
+            OnPropertyChanged("CartItemsCount");
+        }
+    }
+
     public MainWindow()
     {
         InitializeComponent();
+        DataContext = this;
         Loaded += async (s, e) => await LoadSongsAsync();
     }
 
@@ -54,16 +84,41 @@ public partial class MainWindow : FluentWindow
     /// </summary>
     /// <param name="sender">The source of the event, typically the button or UI element that was clicked.</param>
     /// <param name="e">The event data associated with the click event.</param>
-    private async void BuySong_click(object sender, RoutedEventArgs e)
+    private async void BuySong_Click(object sender, RoutedEventArgs e)
     {
         if (SongsGrid.SelectedItem is Song selectedSong)
         {
-            await ShowMessageAsync($"You have purchased:\n{selectedSong.Artist} - {selectedSong.Title}\n\nPrice: ${selectedSong.Price:F2}", "Purchase Successful");
+            var existingSong = shoppingCart.FirstOrDefault(item => item.Product.Id == selectedSong.Id);
+            if (existingSong != null)
+            {
+                existingSong.Quantity++;
+                CartItemsCount = shoppingCart.Sum(item => item.Quantity);
+            }
+            else
+            {
+                var newSong = new ShoppingCartItem() { Product = selectedSong, Quantity = 1 };
+                shoppingCart.Add(newSong);
+                CartItemsCount++;
+            }
         }
         else
         {
             await ShowMessageAsync("Please select a song from the list to purchase.", "No Song Selected");
         }
+    }
+
+    /// <summary>
+    /// Handles the click event for the cart items button, displaying the shopping cart window and updating the cart
+    /// item count.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the click event.</param>
+    private async void CartItemsButton_Click(object sender, RoutedEventArgs e)
+    {
+        var shoppingCartWindow = new ShoppingCartWindow(shoppingCart);
+        shoppingCartWindow.ShowDialog();
+        shoppingCartWindow.Owner = this;
+        CartItemsCount = shoppingCart.Sum(item => item.Quantity);
     }
 
     /// <summary>
@@ -186,4 +241,10 @@ public partial class MainWindow : FluentWindow
         };
         return box.ShowDialogAsync().Result;
     }
+
+    /// <summary>
+    /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+    /// </summary>
+    /// <param name="name">The name of the property that changed. Cannot be null or empty.</param>
+    protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
