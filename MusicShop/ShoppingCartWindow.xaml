@@ -1,0 +1,55 @@
+﻿<ui:FluentWindow  x:Class="MusicShop.ShoppingCartWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                 Title="Cart Window" Height="450" Width="600"
+                 WindowBackdropType="Mica"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowStartupLocation="CenterOwner"
+                 ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Title="Shopping Cart" Grid.Row="0" Margin="0,0,0,10"/>
+
+        <DataGrid x:Name="ItemsToBuy" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Title" Binding="{Binding Product.Title}"/>
+                <DataGridTextColumn Header="Artist" Binding="{Binding Product.Artist}"/>
+                <DataGridTextColumn Header="Price" Binding="{Binding Product.Price}"/>
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
+                <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice}"/>
+
+                <DataGridTemplateColumn Header="Actions">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button Content="+" Appearance="Secondary" Margin="0,0,2,0" Click="MoreButton_Click"/>
+                                <ui:Button Content="-" Appearance="Secondary" Margin="0,0,2,0" Click="LessButton_Click"/>
+                                <ui:Button Content="x" Appearance="Secondary" Click="DeleteItemButton_Click"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="Price:" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0,10,0" />
+            <ui:TextBox Text="{Binding Sum, Mode=OneWay}" ClearButtonEnabled="False" IsReadOnly="True" FontWeight="Bold"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <ui:Button Content="Cancel" Appearance="Secondary" Margin="0,0,10,0" Click="CancelButton_Click"/>
+            <ui:Button Content="Buy" Appearance="Primary" Click="BuyButton_Click"/>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>
